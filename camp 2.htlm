@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cities</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: grey;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .banner {
+            width: 100%;
+            padding-top: 30px;
+            padding-bottom: 20px;
+            text-align: center;
+            color: white;
+            font-size: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">Cities</div>
+</body>
+</html>
