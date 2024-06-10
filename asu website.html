@@ -6,6 +6,8 @@
     main {
       width: 100%;
       background-color: lightgreen;
+      padding: 0;
+      margin: 0;
     }
     
     #banner {
@@ -17,27 +19,38 @@
     
     div {
       height: 50px;
-      margin: 10px;
+      margin: 0px;
       background-color: white;
       border: 1px solid black;
     }
     
+    #div1 {
+      margin-left: 0;
+      height: 600px;
+    }
+    
     #left_column_div1 {
-      width: 60%;
+      width: 600px;
+      height: 600px;
       float: left;
       margin-right: 0;
+      margin-bottom: 0;
+      margin-top: 0;
     }
     
     #left_column_div1 img {
-      width: 100%;
-      height: 75%;
+      width: 100px;
+      height: 100px;
     }
     
     #right_column_div1 {
-      width: 40%;
+      width: 1200px
+      height: 1200px
       float: right;
       background-color: silver;
       margin-left: 0;
+      margin-bottom: 0;
+      margin-top: 0;
     }
     
     #right_column_div1 ul {
@@ -48,11 +61,26 @@
     #right_column_div1 li {
       margin-bottom: 10px;
     }
-
+    
     .clearfix::after {
       content: "";
       display: table;
       clear: both;
+    }
+    #div2 {
+      display: flex;
+    }
+    
+    .name-card {
+      width: 25%;
+      text-align: center;
+      padding: 10px;
+    }
+    
+    .name-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
     }
   </style>
 </head>
@@ -73,7 +101,38 @@
         </ul>
       </div>
     </div>
-    <div id="div2"></div>
+    <div id="div2">
+
+      <div class="name-card">
+        <img src="DIV_2a.png" alt="Product 1">
+        <p>Product: Washing Machine</p>
+        <p>On sale: 70% off</p>
+        <p>Price range: $500 - $1500</p>
+      </div>
+      <div class="name-card">
+        <img src="person2.jpg" alt="Person 2">
+        <p>Name: Jane Smith</p>
+        <p>Occupation: Graphic Designer</p>
+        <p>Location: Los Angeles</p>
+      </div>
+      <div class="name-card">
+        <img src="person3.jpg" alt="Person 3">
+        <p>Name: Alex Johnson</p>
+        <p>Occupation: Data Analyst</p>
+        <p>Location: Chicago</p>
+      </div>
+      <div class="name-card">
+        <img src="person4.jpg" alt="Person 4">
+        <p>Name: Sarah Williams</p>
+        <p>Occupation: Marketing Manager</p>
+        <p>Location: Miami</p>
+      </div>
+  
+      
+
+
+    </div>
+   
     <div id="div3"></div>
     <div id="div4"></div>
     <div id="div5"></div>
