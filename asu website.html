@@ -18,39 +18,26 @@
     }
     
     div {
-      height: 50px;
-      margin: 0px;
       background-color: white;
       border: 1px solid black;
     }
     
     #div1 {
-      margin-left: 0;
-      height: 600px;
+      display: flex;
     }
-    
+
     #left_column_div1 {
-      width: 600px;
-      height: 600px;
-      float: left;
-      margin-right: 0;
-      margin-bottom: 0;
-      margin-top: 0;
+      width: 60%;
     }
     
     #left_column_div1 img {
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      height: 75%;
     }
-    
+
     #right_column_div1 {
-      width: 1200px
-      height: 1200px
-      float: right;
+      width: 40%;
       background-color: silver;
-      margin-left: 0;
-      margin-bottom: 0;
-      margin-top: 0;
     }
     
     #right_column_div1 ul {
@@ -67,21 +54,30 @@
       display: table;
       clear: both;
     }
+    
     #div2 {
       display: flex;
     }
-    
+
+    .name-card-list {
+      display: flex;
+      justify-content: space-between;
+    }
+
     .name-card {
-      width: 25%;
+      width: 23%;
       text-align: center;
       padding: 10px;
+      display: inline-block;
+      vertical-align: top;
     }
     
     .name-card img {
       width: 100px;
       height: 100px;
-      border-radius: 50%;
+      border-radius: 25%;
     }
+
   </style>
 </head>
 <body>
@@ -90,7 +86,7 @@
   </div>
   <h1>Welcome to ASU</h1>
   <main>
-    <div id="div1" class="clearfix">
+     <div id="div1" class="clearfix">
       <div id="left_column_div1">
         <img src="image1.jpg" alt="Image 1" style="width: 100%; height: 75%;">
       </div>
@@ -101,36 +97,36 @@
         </ul>
       </div>
     </div>
+
     <div id="div2">
-
-      <div class="name-card">
-        <img src="DIV_2a.png" alt="Product 1">
-        <p>Product: Washing Machine</p>
-        <p>On sale: 70% off</p>
-        <p>Price range: $500 - $1500</p>
-      </div>
-      <div class="name-card">
-        <img src="person2.jpg" alt="Person 2">
-        <p>Name: Jane Smith</p>
-        <p>Occupation: Graphic Designer</p>
-        <p>Location: Los Angeles</p>
-      </div>
-      <div class="name-card">
-        <img src="person3.jpg" alt="Person 3">
-        <p>Name: Alex Johnson</p>
-        <p>Occupation: Data Analyst</p>
-        <p>Location: Chicago</p>
-      </div>
-      <div class="name-card">
-        <img src="person4.jpg" alt="Person 4">
-        <p>Name: Sarah Williams</p>
-        <p>Occupation: Marketing Manager</p>
-        <p>Location: Miami</p>
-      </div>
-  
-      
-
-
+      <ul class="name-card-list">
+        <li class="name-card"
+        onclick="window.location.href='WashingMachine.html'">
+          <img src="DIV_2a.png" alt="Product 1">
+          <p>Product: Washing Machine</p>
+          <p>On Sale: 70% Off</p>
+          <p>Price Range: $500 - $1500</p>
+        </li>
+        <li class="name-card">
+          <img src="DIV_2b.png" alt="Product 2">
+          <p>Product: Cloth Dryer</p>
+          <p>On Sale: 40% Off</p>
+          <p>Price Range: $800 - $1400</p>
+        </li>
+        <li class="name-card">
+          <img src="DIV_2c.png" alt="Product 3">
+          <p>Product: Refrigerator</p>
+          <p>On Sale: 50% Off</p>
+          <p>Price Range: $1000 - $2000</p>
+        </li>
+        <li class="name-card">
+          <img src="DIV_2d.png" alt="Product 4">
+          <p>Product: Microwave Oven</p>
+          <p>Product: Dish Washer</p>
+          <p>Price Range: $200 - $500</p>
+        </li>
+      </ul>
+    </div>
     </div>
    
     <div id="div3"></div>
