@@ -78,7 +78,56 @@
       border-radius: 25%;
     }
 
+    #div3 {
+      display: flex;
+    }
+    
+    #left_column_div3 {
+      width: 25%;
+    }
+    
+    #right_column_div3 {
+      width: 75%;
+
+      #left_column_div3 h2 {
+      margin-bottom: 10px;
+    }
+
+    #left_column_div3 ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    #left_column_div3 li {
+      margin-bottom: 5px;
+    }
+
+    #right_column_div3 h2 {
+      margin-bottom: 10px;
+    }
+
+    #right_column_div3 p {
+      margin-bottom: 10px;
+    }
   </style>
+  
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var leftColumnItems = document.querySelectorAll('#left_column_div3 li');
+      var rightColumnHeadline = document.querySelector('#right_column_div3 h2');
+      var rightColumnParagraph = document.querySelector('#right_column_div3 p');
+      
+      leftColumnItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+          var listItemText = item.textContent;
+          var headlineText = listItemText.repeat(5);
+          var paragraphText = listItemText.repeat(20);
+          rightColumnHeadline.textContent = headlineText;
+          rightColumnParagraph.textContent = paragraphText;
+        });
+      });
+    });
+    </script>
 </head>
 <body>
   <div id="banner">
@@ -121,15 +170,32 @@
         </li>
         <li class="name-card">
           <img src="DIV_2d.png" alt="Product 4">
-          <p>Product: Microwave Oven</p>
           <p>Product: Dish Washer</p>
+          <p>On Sale: 30% Off</p>
           <p>Price Range: $200 - $500</p>
         </li>
       </ul>
     </div>
     </div>
    
-    <div id="div3"></div>
+    <div id="div3">
+      <div id="left_column_div3">
+        <h2>Table of Contents</h2>
+        <ul>
+          <li>A</li>
+          <li>B</li>
+          <li>C</li>
+          <li>D</li>
+          <li>E</li>
+          <li>F</li>
+          <li>G</li>
+        </ul>
+      </div>
+      <div id="right_column_div3">
+        <h2></h2>
+        <p></p>
+      </div>
+    </div>
     <div id="div4"></div>
     <div id="div5"></div>
     <div id="div6"></div>
