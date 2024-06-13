@@ -88,7 +88,7 @@
     
     #right_column_div3 {
       width: 75%;
-
+    }
       #left_column_div3 h2 {
       margin-bottom: 10px;
     }
@@ -109,24 +109,28 @@
     #right_column_div3 p {
       margin-bottom: 10px;
     }
+
   </style>
   
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var leftColumnItems = document.querySelectorAll('#left_column_div3 li');
-      var rightColumnHeadline = document.querySelector('#right_column_div3 h2');
-      var rightColumnParagraph = document.querySelector('#right_column_div3 p');
-      
-      leftColumnItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-          var listItemText = item.textContent;
+  document.addEventListener('DOMContentLoaded', function() {
+    var leftColumnItems = document.querySelectorAll('#left_column_div3 li');
+    var rightColumnHeadline = document.querySelector('#right_column_div3 h2');
+    var rightColumnParagraph = document.querySelector('#right_column_div3 p');
+    leftColumnItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        var listItemText = item.textContent;
+        if (listItemText === "How to Win") {
+          rightColumnHeadline.textContent = "In chess you win by checkmate";
+          rightColumnParagraph.textContent = "Checkmate is whenever your opponent's king is threatened, but nothing can block it and the king cannot move anywhere else. This means your opponent will lose because their king will have died. In addition, you can win if your opponent abandons the game. This means that they leave or give up.";
+        } else {
           var headlineText = listItemText.repeat(5);
           var paragraphText = listItemText.repeat(20);
           rightColumnHeadline.textContent = headlineText;
           rightColumnParagraph.textContent = paragraphText;
-        });
+        }
       });
     });
+  });
     </script>
 </head>
 <body>
@@ -182,13 +186,13 @@
       <div id="left_column_div3">
         <h2>Table of Contents</h2>
         <ul>
-          <li>A</li>
-          <li>B</li>
-          <li>C</li>
-          <li>D</li>
-          <li>E</li>
-          <li>F</li>
-          <li>G</li>
+          <li>How to Win</li>
+          <li>Pawn</li>
+          <li>Rook</li>
+          <li>Knight</li>
+          <li>Bishop</li>
+          <li>Queen</li>
+          <li>King</li>
         </ul>
       </div>
       <div id="right_column_div3">
@@ -196,7 +200,10 @@
         <p></p>
       </div>
     </div>
-    <div id="div4"></div>
+    <div id="div4" style="position: relative;">
+      <img src="div_4a.jpg" alt="Image" style="width: 100%; height: 75%;">
+      <p style="position: absolute; top: 0; right: 0;">My Dream Vacation</p>
+    </div>
     <div id="div5"></div>
     <div id="div6"></div>
     <div id="div7"></div>
