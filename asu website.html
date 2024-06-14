@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Welcome to ASU</title>
+  <title>Chess Totorial</title>
   <style>
     main {
       width: 100%;
@@ -28,6 +28,7 @@
 
     #left_column_div1 {
       width: 60%;
+      height: 100%;
     }
     
     #left_column_div1 img {
@@ -111,82 +112,117 @@
     }
 
   </style>
-  <script>
+ <script>
+  let div3Content = [];
+  div3Content[0]="The pawn (♙, ♟) is the most numerous and weakest piece in the game of chess."
+               +" It may move one square directly forward, it may move two squares directly forward on its first move, "
+              +"it may capture one square diagonally forward. Each player begins a game with eight pawns, one on each "
+               +"square of their second rank. The white pawns start on a2 through h2; the black pawns start on a7 "
+               +"through h7."
+               +" Individual pawns are referred to by the file on which they stand. For example, one speaks" 
+               +" of \"White\'s f-pawn\" or \"Black\'s b-pawn\". Alternatively, they can be referred to by the "
+               +"piece which stood on that file at the beginning of the game, e.g. \"White\'s king bishop\'s pawn"
+               +" \"Black\'s queen knight's pawn\". It is also common to refer to a rook\'s pawn, meaning any pawn "
+               + "the a"
+               +" or h-files, a knight\'s pawn (on the b- or g-files), a bishop\'s pawn (on the c- or f-files),"
+               +" a queen\'s"
+               +" pawn (on the d-file), a king\'s pawn (on the e-file), and a central pawn (on the d- or e-files).";
+  
+               div3Content[1]="The rook, also known as the castle, is a powerful piece in chess that can move in a straight line,"
+               +" either horizontally or vertically, any number of squares without jumping. Rooks can capture enemy pieces on their"
+               +" path by landing directly on their square, but they can only capture one piece per turn. Rooks can"
+               +" also participate in castling, a special move that involves the king and rook. ";
+  
+               div3Content[2]="The knight is unique for two major reasons: 1) it is the only piece that can hop or jump"
+               +" over another piece, and 2) every time it moves it alternates from a light-square to a dark-square, or vice-versa."
+               +"The knight is considered a minor piece (like a bishop) and is worth three points. It is considerably more valuable "
+               +"than a pawn (which is worth one point), equally valuable as a bishop (also three points), but less"
+               +" valuable than a rook (five points) and a queen (nine points)."
+               +"The knight moves multiple squares each move. It either moves up or down one square vertically and over two squares horizontally OR up or down two squares vertically and over one square horizontally. This movement can be remembered as an \"L-shape\" because it looks like a capital \"L\".";
+  
+               div3Content[3]="The bishop is a major chess piece that moves diagonally and captures opposing pieces by landing on their squares. Bishops can move any number of squares along a diagonal as long as there are no other pieces blocking their path. However, they are restricted to the same color squares throughout the game. For example, a bishop that starts on a white square is called a \"light square bishop\" and must remain on white squares.";
+  
+               div3Content[4]="The queen is considered the most powerful piece in chess because of its range and flexibility. At the start of the game, each player places their queen in the middle of the first rank next to the king, on the d1 square for white and the d8 square for black. The queen can move any number of unoccupied squares vertically, horizontally, or diagonally, as long as nothing blocks its path. It can also capture an enemy piece by moving to the occupied square and replacing it. " 
+                 +"The queen's movement combines the powers of the rook and bishop. Some say that an easy way to remember how the queen moves is like a rook and bishop combined."
+                 +"Exchanging queens can make the game more peaceful and reduce the chances of an attack, but it's generally not recommended to lose your queen."
+ div3Content[5]="The king (♔, ♚) is the most important piece in the game of chess. It may move to any adjoining square; it may also perform, in tandem with the"
+ +" rook, a special move called castling. If a player's king is threatened with capture, it is said to be in check, and the player must remove the threat of capture immediately.";
+  function replaceContent(letter) {
+    var rightColumn = document.querySelector('#div3 .right-column');
+    rightColumn.innerHTML = letter;
+  }
+  
   document.addEventListener('DOMContentLoaded', function() {
-    var leftColumnItems = document.querySelectorAll('#left_column_div3 li');
-    var rightColumnHeadline = document.querySelector('#right_column_div3 h2');
-    var rightColumnParagraph = document.querySelector('#right_column_div3 p');
-    leftColumnItems.forEach(function(item) {
+    var listItems = document.querySelectorAll('#div3 .left-column li');
+    listItems.forEach(function(item, i) {
       item.addEventListener('click', function() {
-        var listItemText = item.textContent;
-        if (listItemText === "How to Win") {
-          rightColumnHeadline.textContent = "In chess you win by checkmate";
-          rightColumnParagraph.textContent = "Checkmate is whenever your opponent's king is threatened, but nothing can block it and the king cannot move anywhere else. This means your opponent will lose because their king will have died. In addition, you can win if your opponent abandons the game. This means that they leave or give up.";
-        } else {
-          var headlineText = listItemText.repeat(5);
-          var paragraphText = listItemText.repeat(20);
-          rightColumnHeadline.textContent = headlineText;
-          rightColumnParagraph.textContent = paragraphText;
-        }
+        replaceContent(div3Content[i]);
       });
     });
   });
-    </script>
+</script>
 </head>
 <body>
   <div id="banner">
-    <h2>Welcome to my webpage</h2>
+    <h2>Welcome, it is time for you to learn the ways of chess.</h2>
   </div>
-  <h1>Welcome to ASU</h1>
+  <h1>WARNING: To play chess you will have to think.</h1>
   <main>
      <div id="div1" class="clearfix">
       <div id="left_column_div1">
-        <img src="image1.jpg" alt="Image 1" style="width: 100%; height: 75%;">
+        <img src="ChessBoard_div1.jpg" alt="Chess Board" style="width: 100%; height: 75%;">
       </div>
       <div id="right_column_div1">
+        <p>Chess is a two-player game where you try to kill the other side's king. It is a very strategic game, unlike checkers, consisting of trades, blunders, checks, and checkmates.</p>
+        <p>First of all, trades are whenever one side captures a piece, losing their own piece in the process. This can happen with any piece (scroll down to learn more about pieces).</p>
+        <p>Also, chess has blunders. A blunder is whenever you lose a piece and you cannot take it back. This is a very bad thing and you should avoid this.</p>
+        <p>Next up, chess has checks. Checks are whenever your king is being threatened. You avoid this by moving your king, capturing the piece, and blocking the path of the piece.</p>
+        <p>Now, I will talk about Checkmate. A checkmate is whenever you check the opponent's king and they cannot move anywhere else, and you win. However, if the opponent's king is not checked, their king cannot move, and they can't move anything else, then it is a stalemate or a draw. Other ways of getting a draw is if both players agree to it.</p>
+        <p>Use the following links if you are interested and want to know more.</p>
         <ul>
-          <li><a href="https://www.asurams.edu">Welcome to ASU</a></li>
-          <li><a href="https://www.backupspirit.com/camp">Summer camp 2024 - WDD-AI</a></li>
+          <li><a href="https://www.chess.com">Click Here to Play Chess Online</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Chess">Click Here to Learn More</a></li>
         </ul>
       </div>
+      </div>
     </div>
-
     <div id="div2">
       <ul class="name-card-list">
-        <li class="name-card"
-        onclick="window.location.href='WashingMachine.html'">
-          <img src="DIV_2a.png" alt="Product 1">
-          <p>Product: Washing Machine</p>
-          <p>On Sale: 70% Off</p>
-          <p>Price Range: $500 - $1500</p>
+        <li class="name-card">
+        <img src="Magnus_div2a.jpg" alt="Product 1">
+          <p>Name: Magnus Carlsen</p>
+          <p>World Chess Rank: #1</p>
+          <p>Chess Rating: 2832</p>
+        </li>
+
+        <li class="name-card">
+          <img src="Hikaru_div2c.jpg" alt="Product 2">
+          <p>Name: Hikaru Nakamura</p>
+          <p>World Chess Rank: #2</p>
+          <p>Chess Rating: 2802</p>
+        </li>
+
+
+        <li class="name-card">
+          <img src="Fabino_div2b.jpg" alt="Product 3">
+          <p>Name: Fabiano Caruana</p>
+          <p>World Chess Rank: #3</p>
+          <p>Chess Rating: 2796</p>
         </li>
         <li class="name-card">
-          <img src="DIV_2b.png" alt="Product 2">
-          <p>Product: Cloth Dryer</p>
-          <p>On Sale: 40% Off</p>
-          <p>Price Range: $800 - $1400</p>
-        </li>
-        <li class="name-card">
-          <img src="DIV_2c.png" alt="Product 3">
-          <p>Product: Refrigerator</p>
-          <p>On Sale: 50% Off</p>
-          <p>Price Range: $1000 - $2000</p>
-        </li>
-        <li class="name-card">
-          <img src="DIV_2d.png" alt="Product 4">
-          <p>Product: Dish Washer</p>
-          <p>On Sale: 30% Off</p>
-          <p>Price Range: $200 - $500</p>
+          <img src="Arjun_div2d.jpg" alt="Product 4">
+          <p>Name: Arjun Erigaisi</p>
+          <p>World Chess Rank: #4</p>
+          <p>Chess Rating: 2775</p>
         </li>
       </ul>
     </div>
     </div>
    
     <div id="div3">
-      <div id="left_column_div3">
-        <h2>Table of Contents</h2>
+      <div id="left_column_div3" class="left-column">
+        <h2>Pieces</h2>
         <ul>
-          <li>How to Win</li>
           <li>Pawn</li>
           <li>Rook</li>
           <li>Knight</li>
@@ -195,31 +231,15 @@
           <li>King</li>
         </ul>
       </div>
-      <div id="right_column_div3">
+      <div id="right_column_div3" class="right-column">
         <h2></h2>
         <p></p>
       </div>
     </div>
     <div id="div4" style="position: relative;">
-      <img src="div_4a.jpg" alt="Image" style="width: 100%; height: 75%;">
-      <p style="position: absolute; top: 0; right: 0;">My Dream Vacation</p>
+      <img src="QueenChess_div4.jpg" alt="Image" style="width: 100%; height: 75%;">
+      <p style="position: absolute; top: 0; right: 0;">Brillant Queen Sacrifice</p>
     </div>
-    <div id="div5"></div>
-    <div id="div6"></div>
-    <div id="div7"></div>
-    <div id="div8"></div>
-    <div id="div9"></div>
-    <div id="div10"></div>
-    <div id="div11"></div>
-    <div id="div12"></div>
-    <div id="div13"></div>
-    <div id="div14"></div>
-    <div id="div15"></div>
-    <div id="div16"></div>
-    <div id="div17"></div>
-    <div id="div18"></div>
-    <div id="div19"></div>
-    <div id="div20"></div>
   </main>
 </body>
 </html>
