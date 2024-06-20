@@ -10,7 +10,27 @@
       padding: 10px;
       margin-bottom: 10px;
     }
+    #div9 {
+      background-color: black;
+      color: red; /* Updated font color to red */
+      padding: 20px;
+    }
+    footer {
+      padding-top: 30px;
+      padding-bottom: 20px;
+      text-align: center;
+    }
+    .banner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
   </style>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
   <div class="jumbotron text-center">
@@ -70,21 +90,60 @@
     <!-- Add content inside div8 -->
     <div id="div8"></div>
 
-    <!-- Add content inside div8 -->
-    <div id="div9">
-        <h2>Section 5. Visualize the training dataset</h2>
-        <button onclick="visualizeDataset()">Visualize the training dataset</button>
+        <!-- Add content inside div -->
+    <div id="div9a">
+      <h2>Section 5. Visualize the training dataset</h2>
+      <button onclick="visualizeDataset()">Visualize the training dataset</button>
+      <div id="plot"></div>
+    </div>
+    
+
+     <!-- Add content inside div9 -->
+     <div id="div9">
+      <h2>Section 6. Define the model</h2>
+      <p>We will define a TensorFlow sequential model with one input x and one output y.</p>
+      <button onclick="defineModel()">Define the model</button>
     </div>
 
     <!-- Add content inside div10 -->
     <div id="div10">
-        <h2>Section 6. Define the model</h2>
-        <p>We will define a TensorFlow sequential model with one input x and one output y.</p>
+      <button onclick="showModelSummary()">Show summary of the model</button>
+      <div id="modelSummary"></div>
     </div>
-    <div id="div11"></div>
-    <div id="div12"></div>
-    <div id="div13"></div>
-    <div id="div14"></div>
+
+    <!-- Add content inside div11 -->
+    <div id="div11">
+      <h2>Section 7. Prepare the training set</h2>
+      <p>We will prepare the extracted data.</p>
+      <ul>
+        <li>Convert the extracted data to Tensor</li>
+        <li>Shuffle the data</li>
+        <li>Normalize to the range between 0 and 1 for fast computation</li>
+      </ul>
+      <button onclick="prepareDataset()">Prepare the dataset</button>
+    </div>
+
+         <!-- Add content inside div12 -->
+    <div id="div12">
+      <h2>Section 8. Visualize the inputs and labels for training</h2>
+      <button onclick="visualizeInputsAndLabels()">Visualize the inputs and labels</button>
+      <div id="visualization"></div>
+    </div>
+
+     <!-- Add content inside div13 -->
+     <div id="div13">
+      <h2>Section 9. Train the model</h2>
+      <button onclick="trainModel()">Train the model using prepared data</button>
+      <div id="trainingPerformance"></div>
+    </div>
+
+       <!-- Add content inside div14 -->
+       <div id="div14">
+        <h2>Section 10. Generate the dataset for testing</h2>
+        <button onclick="generateTestData()">Generate test data values</button>
+        <div id="testResults"></div>
+      </div>
+
     <div id="div15"></div>
     <div id="div16"></div>
     <div id="div17"></div>
@@ -98,89 +157,273 @@
   <!-- Include Bootstrap JavaScript -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-   <script>
-    var dataset; // Global variable to store the dataset
-    var extractedData; // Global variable to store the extracted dataset
-    var model; // Global variable to store the TensorFlow model
+    <script>
+      var dataset; // Global variable to store the dataset
+      var extractedData; // Global variable to store the extracted dataset
+      var model; // Global variable to store the TensorFlow model
 
-    function loadLibraries() {
-      var script1 = document.createElement('script');
-      script1.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js';
-      document.head.appendChild(script1);
+      function loadLibraries() {
+        var script1 = document.createElement('script');
+        script1.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js';
+        document.head.appendChild(script1);
 
-      var script2 = document.createElement('script');
-      script2.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js';
-      document.head.appendChild(script2);
+        var script2 = document.createElement('script');
+        script2.src = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js';
+        document.head.appendChild(script2);
 
-      var consoleOutput = document.getElementById('div4');
-      consoleOutput.innerHTML = 'Libraries loaded successfully.';
-    }
+        var consoleOutput = document.getElementById('div4');
+        consoleOutput.innerHTML = 'Libraries loaded successfully.';
+      }
 
-    function loadDataset() {
-      fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json')
-        .then(response => response.json())
-        .then(data => {
-          dataset = data; // Save the dataset to the global variable
-          var consoleOutput = document.getElementById('div6');
-          var firstTenData = JSON.stringify(data.slice(0, 10)); // Get the first 10 data values
-          consoleOutput.innerHTML = firstTenData;
-        })
-        .catch(error => {
-          var consoleOutput = document.getElementById('div6');
-          consoleOutput.innerHTML = 'Error loading dataset: ' + error;
-        });
-    }
+      function loadDataset() {
+        fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json')
+          .then(response => response.json())
+          .then(data => {
+            dataset = data; // Save the dataset to the global variable
+            var consoleOutput = document.getElementById('div6');
+            var firstTenData = JSON.stringify(data.slice(0, 10)); // Get the first 10 data values
+            consoleOutput.innerHTML = firstTenData;
+          })
+          .catch(error => {
+            var consoleOutput = document.getElementById('div6');
+            consoleOutput.innerHTML = 'Error loading dataset: ' + error;
+          });
+      }
 
-    function extractData() {
-      if (dataset) {
-        extractedData = dataset.map(item => {
-          return {
-            Miles_per_Gallon: item.Miles_per_Gallon,
-            Horsepower: item.Horsepower
-          };
-        });
+      function defineModel() {
+        model = tf.sequential();
+        model.add(tf.layers.dense({ inputShape: [1], units: 1 }));
+        model.add(tf.layers.dense({ units: 1 }));
 
         var consoleOutput = document.getElementById('div8');
-        var firstTenData = JSON.stringify(extractedData.slice(0, 10)); // Get the first 10 data values of the extracted dataset
-        consoleOutput.innerHTML = firstTenData;
+        consoleOutput.innerHTML = 'Model defined successfully.';
+      }
+    </script>
+
+
+<script>
+  var dataset; // Global variable to store the dataset
+  var extractedData; // Global variable to store the extracted dataset
+  var model; // Global variable to store the TensorFlow model
+
+  function extractData() {
+    if (dataset) {
+      extractedData = dataset.map(item => {
+        return {
+          Miles_per_Gallon: item.Miles_per_Gallon,
+          Horsepower: item.Horsepower
+        };
+      });
+
+      var consoleOutput = document.getElementById('div8');
+      var firstTenData = JSON.stringify(extractedData.slice(0, 10)); // Get the first 10 data values of the extracted dataset
+      consoleOutput.innerHTML = firstTenData;
+    } else {
+      var consoleOutput = document.getElementById('div8');
+      consoleOutput.innerHTML = 'Dataset not loaded yet.';
+    }
+  }
+
+
+      function visualizeDataset() {
+        const horsepowerValues = extractedData.map(item => item.Horsepower);
+        const mpgValues = extractedData.map(item => item.Miles_per_Gallon);
+
+        const trace = {
+            x: horsepowerValues,
+            y: mpgValues,
+            mode: 'markers',
+            type: 'scatter'
+        };
+
+        const layout = {
+            title: 'Horsepower vs Miles_per_Gallon',
+            xaxis: {
+                title: 'Horsepower',
+                range: [0, 240],
+                dtick: 20
+            },
+            yaxis: {
+                title: 'MPG',
+                range: [0, 50],
+                dtick: 10
+            }
+        };
+
+        Plotly.newPlot('plot', [trace], layout);
+      }
+ 
+  function defineModel() {
+    model = tf.sequential();
+    model.add(tf.layers.dense({ inputShape: [1], units: 1 }));
+    model.add(tf.layers.dense({ units: 1 }));
+
+    var consoleOutput = document.getElementById('div8');
+    consoleOutput.innerHTML = 'Model defined successfully.';
+  }
+
+  function showModelSummary() {
+    if (model) {
+      const container = document.getElementById('modelSummary');
+      tfvis.show.modelSummary(container, model);    
+
+     } else {
+      var consoleOutput = document.getElementById('div8');
+      consoleOutput.innerHTML = 'Model not defined yet.';
+    }
+  }
+
+  function prepareDataset() {
+      if (extractedData) {
+        // Extract horsepower as inputs and mpg as labels
+        const inputs = extractedData.map(d => d.Horsepower);
+        const labels = extractedData.map(d => d.Miles_per_Gallon);
+
+        // Convert inputs and labels to TensorFlow tensors with shape [*, 1]
+        const inputTensor = tf.tensor2d(inputs, [inputs.length, 1]);
+        const labelTensor = tf.tensor2d(labels, [labels.length, 1]);
+
+        // Normalize the data to the range 0 - 1 using min-max scaling
+        const inputMax = inputTensor.max();
+        const inputMin = inputTensor.min();
+        const labelMax = labelTensor.max();
+        const labelMin = labelTensor.min();
+
+        const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+        const normalizedLabels = labelTensor.sub(labelMin).div(labelMax.sub(labelMin));
+
+        // Store the normalized tensors and min/max values in the global variable
+        preparedData = {
+          inputs: normalizedInputs,
+          labels: normalizedLabels,
+          inputMax: inputMax,
+          inputMin: inputMin,
+          labelMax: labelMax,
+          labelMin: labelMin
+        };
+
+        var consoleOutput = document.getElementById('div8');
+        consoleOutput.innerHTML = 'Dataset prepared successfully.';
       } else {
         var consoleOutput = document.getElementById('div8');
-        consoleOutput.innerHTML = 'Dataset not loaded yet.';
+        consoleOutput.innerHTML = 'Extracted data not available.';
       }
     }
 
-    function visualizeDataset() {
-      if (extractedData) {
-        const data = extractedData.map(item => ({
-          x: item.Horsepower,
-          y: item.Miles_per_Gallon
+    function visualizeInputsAndLabels() {
+      if (preparedData) {
+        const { inputs, labels } = preparedData;
+
+        const inputValues = inputs.dataSync();
+        const labelValues = labels.dataSync();
+
+        const data = Array.from(inputValues).map((val, i) => ({
+          x: val,
+          y: labelValues[i]
         }));
 
-        const surface = { name: 'Horsepower vs Miles_per_Gallon', tab: 'Charts' };
-        tfvis.render.scatterplot(surface, { values: data }, {
-          xLabel: 'Horsepower',
-          yLabel: 'Miles_per_Gallon',
-          xMin: 0,
-          xMax: 240,
-          yMin: 0,
-          yMax: 50,
-          xAxisTickCount: 13,
-          yAxisTickCount: 6
-        });
+        const surface = { name: 'Inputs vs Labels', tab: 'Charts' };
+        const options = {
+          xLabel: 'Inputs',
+          yLabel: 'Labels',
+          xAxisDomain: [0, 1],
+          yAxisDomain: [0, 1]
+        };
+
+        tfvis.render.scatterplot(
+          { name: 'Inputs vs Labels', tab: 'Charts' },
+          { values: data },
+          options
+        );
       } else {
-        var consoleOutput = document.getElementById('div8');
-        consoleOutput.innerHTML = 'Dataset not extracted yet.';
+        var consoleOutput = document.getElementById('div12');
+        consoleOutput.innerHTML = 'Prepared data not available.';
       }
     }
 
-    function defineModel() {
-      model = tf.sequential();
-      model.add(tf.layers.dense({ inputShape: [1], units: 1 }));
-      model.add(tf.layers.dense({ units: 1 }));
+    async function trainModel() {
+      if (preparedData && model) {
+        const { inputs, labels } = preparedData;
 
-      var consoleOutput = document.getElementById('div9');
-      consoleOutput.innerHTML += '<p>Model defined successfully.</p>';
+        model.compile({
+          optimizer: tf.train.adam(),
+          loss: tf.losses.meanSquaredError,
+          metrics: ['mse']
+        });
+
+        const surface = document.getElementById('trainingPerformance');
+        const metrics = ['loss', 'mse'];
+
+        const history = await model.fit(inputs, labels, {
+          batchSize: 32,
+          epochs: 50,
+          shuffle: true,
+          validationSplit: 0.2,
+          callbacks: tfvis.show.fitCallbacks(surface, metrics, { height: 200, callbacks: ['onEpochEnd'] })
+        });
+
+        var consoleOutput = document.getElementById('div13');
+        consoleOutput.innerHTML = 'Model trained successfully.';
+      } else {
+        var consoleOutput = document.getElementById('div13');
+        consoleOutput.innerHTML = 'Prepared data or model not available.';
+      }
+    }
+
+    function generateTestData() {
+      if (model && preparedData) {
+        const { inputMin, inputMax, labelMin, labelMax } = preparedData;
+        const numFeatures = 1; // Define the number of features
+
+        // Generate uniform range of numbers between 0 and 1 for inputs
+        const testInputs = tf.linspace(0, 1, 100).reshape([100, numFeatures]);
+
+        // Use the trained model to predict the results
+        const testPredictions = model.predict(testInputs);
+
+        // Un-normalize the predictions
+        const unNormInputs = testInputs.mul(inputMax.sub(inputMin)).add(inputMin);
+        const unNormPredictions = testPredictions.mul(labelMax.sub(labelMin)).add(labelMin);
+
+        // Convert tensors to arrays for visualization
+        const inputValues = unNormInputs.dataSync();
+        const predictionValues = unNormPredictions.dataSync();
+
+        // Prepare data for visualization
+        const data = Array.from(inputValues).map((val, i) => ({
+          x: val,
+          y: predictionValues[i]
+        }));
+
+        // Visualize the predictions
+        const trace = {
+          x: inputValues,
+          y: predictionValues,
+          mode: 'lines',
+          type: 'scatter'
+        };
+
+        const layout = {
+          title: 'Model Predictions vs Inputs',
+          xaxis: {
+            title: 'Horsepower'
+          },
+          yaxis: {
+            title: 'Miles_per_Gallon'
+          }
+        };
+
+        Plotly.newPlot('testResults', [trace], layout);
+      } else {
+        var consoleOutput = document.getElementById('testResults');
+        consoleOutput.innerHTML = 'Model or prepared data not available.';
+      }
     }
   </script>
+</main>
+
+<!-- Include Bootstrap JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
 </body>
 </html>
