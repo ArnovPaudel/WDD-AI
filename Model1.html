@@ -33,7 +33,7 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-  <div class="jumbotron text-center">
+  <div class="banner">
     <h1 class="display-4">Summer CAM WDD Using AI</h1>
   </div>
 
@@ -134,17 +134,25 @@
      <div id="div13">
       <h2>Section 9. Train the model</h2>
       <button onclick="trainModel()">Train the model using prepared data</button>
-      <div id="trainingPerformance"></div>
+      <div id="trainingPerformance">
+      </div>
     </div>
 
-       <!-- Add content inside div14 -->
-       <div id="div14">
-        <h2>Section 10. Generate the dataset for testing</h2>
-        <button onclick="generateTestData()">Generate test data values</button>
-        <div id="testResults"></div>
-      </div>
+    <!-- Add content inside div14 -->
+    <div id="div14">
+      <h2>Section 10. Generate the dataset for testing</h2>
+      <button onclick="generateTestData()">Generate test data values</button>
+      <div id="testResults">
+      </div> 
+    </div>
 
-    <div id="div15"></div>
+   <!-- Add content inside div15 -->
+<div id="div15">
+  <h2>Section 11. Visualize the predictions</h2>
+  <button onclick="visualizePredictions()">Visualize the predictions</button>
+  <div id="predictionsPlot"></div>
+</div>
+
     <div id="div16"></div>
     <div id="div17"></div>
     <div id="div18"></div>
@@ -370,55 +378,122 @@
       }
     }
 
+
+    let testDataInputs = [];
+    let testDataPredictions = [];
+
     function generateTestData() {
-      if (model && preparedData) {
-        const { inputMin, inputMax, labelMin, labelMax } = preparedData;
-        const numFeatures = 1; // Define the number of features
+        // Define the number of features
+        const numFeatures = 1;
 
         // Generate uniform range of numbers between 0 and 1 for inputs
-        const testInputs = tf.linspace(0, 1, 100).reshape([100, numFeatures]);
+        const numInputs = 100;
+        const inputs = tf.randomUniform([numInputs, numFeatures]);
 
         // Use the trained model to predict the results
-        const testPredictions = model.predict(testInputs);
+        const predictions = model.predict(inputs);
 
-        // Un-normalize the predictions
-        const unNormInputs = testInputs.mul(inputMax.sub(inputMin)).add(inputMin);
-        const unNormPredictions = testPredictions.mul(labelMax.sub(labelMin)).add(labelMin);
+        // Un-normalize the data by doing the inverse of the min-max scaling
+        /*
+        const unnormalizedInputs = inputs.mul(inputMax.sub(inputMin)).add(inputMin);
+        const unnormalizedPredictions = predictions.mul(outputMax.sub(outputMin)).add(outputMin);
+        */
+        const unnormalizedInputs = inputs.mul(preparedData.inputMax.sub(preparedData.inputMin)).add(preparedData.inputMin);
+        const unnormalizedPredictions = predictions.mul(preparedData.labelMax.sub(preparedData.labelMin)).add(preparedData.labelMin);
 
-        // Convert tensors to arrays for visualization
-        const inputValues = unNormInputs.dataSync();
-        const predictionValues = unNormPredictions.dataSync();
 
-        // Prepare data for visualization
-        const data = Array.from(inputValues).map((val, i) => ({
-          x: val,
-          y: predictionValues[i]
-        }));
 
-        // Visualize the predictions
-        const trace = {
-          x: inputValues,
-          y: predictionValues,
-          mode: 'lines',
-          type: 'scatter'
-        };
-
-        const layout = {
-          title: 'Model Predictions vs Inputs',
-          xaxis: {
-            title: 'Horsepower'
-          },
-          yaxis: {
-            title: 'Miles_per_Gallon'
-          }
-        };
-
-        Plotly.newPlot('testResults', [trace], layout);
-      } else {
-        var consoleOutput = document.getElementById('testResults');
-        consoleOutput.innerHTML = 'Model or prepared data not available.';
-      }
+        // Save the un-normalized inputs and predictions to global variables
+        testDataInputs = unnormalizedInputs.arraySync();
+        testDataPredictions = unnormalizedPredictions.arraySync();
     }
+
+    function generateTestData1() {
+  if (model && preparedData) {
+    const { inputs, labels, inputMax, inputMin, labelMax, labelMin } = preparedData;
+    const numFeatures = 1; // Set numFeatures to 1
+
+    // Generate uniform range of numbers between 0 and 1 for inputs
+    const testInputs = tf.linspace(0, 1, 100).reshape([100, numFeatures]);
+
+    // Use the trained model to predict the results
+    const testPredictions = model.predict(testInputs);
+
+    // Un-normalize the predictions
+    const unNormInputs = testInputs.mul(inputMax.sub(inputMin)).add(inputMin);
+    const unNormPredictions = testPredictions.mul(labelMax.sub(labelMin)).add(labelMin);
+
+    // Convert tensors to arrays for visualization
+    const inputValues = unNormInputs.dataSync();
+    const predictionValues = unNormPredictions.dataSync();
+
+    // Prepare data for visualization
+    const data = Array.from(inputValues).map((val, i) => ({
+      x: val,
+      y: predictionValues[i]
+    }));
+
+    const layout = {
+      title: 'Model Predictions vs Inputs',
+      xaxis: {
+        title: 'Horsepower'
+      },
+      yaxis: {
+        title: 'Miles_per_Gallon'
+      }
+    };
+
+    Plotly.newPlot('testResults', [trace], layout);
+  } else {
+    var consoleOutput = document.getElementById('testResults');
+    consoleOutput.innerHTML = 'Model or prepared data not available.';
+  }
+}
+
+
+function visualizePredictions() {
+
+/* not from AI --- start*/
+const predictedPoints = Array.from(testDataInputs).map((val, i) => {
+    return {x: val, y: testDataPredictions[i]}
+});
+
+const originalPoints = extractedData.map(d => ({
+    x: d.Horsepower, y: d.Miles_per_Gallon,
+}));
+/* not from AI --- start*/
+
+const data = {
+    values: [originalPoints, predictedPoints],
+    //values: [extractedData, testDataInputs],
+    series: ['Extracted Data', 'Test Data Predictions'],
+};
+const surface = tfvis.render.scatterplot(
+    div15, data, {xLabel: 'X', yLabel: 'Y', height: 300, series: ['Extracted Data', 'Test Data Predictions']}
+);
+}
+
+
+
+function visualizePredictions1() {
+ /* not from AI --- start*/
+ const predictedPoints = Array.from(testDataInputs).map((val, i) => {
+ return {x: val, y: testDataPredictions[i]}
+ });
+ const originalPoints = extractedData.map(d => ({
+ x: d.Horsepower, y: d.Miles_per_Gallon,
+ }));
+ /* not from AI --- start*/
+ const data = {
+ values: [originalPoints, predictedPoints],
+ series: ['Extracted Data', 'Test Data Predictions'],
+ };
+ const surface = tfvis.render.scatterplot( 
+  div15, data, {xLabel: 'X', yLabel: 'Y', height: 300,
+series: ['Extracted Data', 'Test Data Predictions']
+ }
+ );
+ }
   </script>
 </main>
 
