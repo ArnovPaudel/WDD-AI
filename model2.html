@@ -14,6 +14,7 @@
 }
   </style>
 </head>
+<script src="data.js"></script>
 <body>
   <div class="container">
     <div class="banner">
@@ -74,16 +75,28 @@
   <div id="div6"></div>
   
   <script>
-    var mnistData;
   
-    function loadDataset() {
-      // Assuming the data.js file contains a class for processing the dataset
-      // Replace 'YourDataClass' with the actual class name from data.js
-      var dataModule = new YourDataClass();
-      mnistData = dataModule.processDataset();
-  
-      document.getElementById('div6').innerText = 'Length of trainImages: ' + mnistData.trainImages.length + ', Length of trainLabels: ' + mnistData.trainLabels.length;
+    let mnistData;
+    async function loadDataset() {
+      try {
+        mnistData = new MnistData();
+        await mnistData.load();
+        displayDatasetShape(mnistData);
+
+
+        //console.log('Dataset and labels loaded successfully');
+      } catch (error) {
+        console.error('Error loading dataset and labels:', error);
+      }
     }
+    function displayDatasetShape(data) {
+      const images = data.trainImages;
+      const labels = data.trainLabels;
+      const imagesShape = images.length;
+      const labelsShape = labels.length;
+      document.getElementById('div6').innerText = `Images shape: ${imagesShape}, Labels shape: ${labelsShape}`; 
+    }
+   
   </script>
      <div id="div7">
         <h2>Section 5. We will show 20 images from the dataset</h2>
@@ -91,23 +104,82 @@
       </div>
       
       <script>
-        function showImages() {
-          var imagesContainer = document.createElement('div');
-          imagesContainer.id = 'imagesContainer';
-          document.getElementById('div7').appendChild(imagesContainer);
-          
-      
-          for (var i = 0; i < 20; i++) {
-            var img = new Image();
-            img.src = mnistData.trainImages[i]; // Assuming trainImages contains the image URLs
-            img.width = 28;
-            img.height = 28;
-            imagesContainer.appendChild(img);
-          }
-        }
+    async   function showImages() {
+ 
+  
+  const examples = mnistData.nextTestBatch(20); // Obtain 20 images from mnistData
+  const surfaceElement = document.getElementById('div7'); // Get the surface element by its ID
+
+  const images = examples.xs;
+  for (let i = 0; i < 20; i++) {
+    const imageTensor = images.slice([i, 0], [1, 784]).reshape([28,28,1]); // Extract the image tensor
+    // const imageDataArray = imageTensor.reshape([28,28,1]); // Convert the tensor to a regular array
+
+    const imageElement = document.createElement('canvas'); // Create a canvas element
+    imageElement.width = 28;
+    imageElement.height = 28;
+    const ctx = imageElement.getContext('2d');
+    const imageData = ctx.createImageData(28, 28); // Create an ImageData object
+
+    await tf.browser.toPixels(imageTensor, imageElement);
+    //for (let j = 0; j < imageDataArray.length; j++) {
+    //  imageData.data[j] = imageDataArray[j]; // Set the pixel data for the image
+    //}
+
+    // ctx.putImageData(imageData, 0, 0); // Draw the image data onto the canvas
+
+    surfaceElement.appendChild(imageElement); // Add the canvas element to the surface
+
+    const label=examples.labels.slice([i,0], [1, 10]);
+    const labelDiv = document.createElement('div');
+    labelDiv.textContent = `Label: ${label}`;
+    surfaceElement.appendChild(labelDiv);
+}
+}
+
       </script>
       
-      <div id="div8"></div>
+      <div id="div8">
+        <h2>Section 6. Define a CNN.</h2>
+        <p>Our CNN has input of shape 28 x 28 x 1.</p>
+        <p>The first layer is a convolution + pooling. We will use 8 filters, each filter has kernel size=5 x 5 and stride =1. The activation function is ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
+        <p>The second layer is also a convolution + pooling. This time, we use 16 filters each of kernel size=5x5 and stride =1. The activation function is also ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
+        <p>The third layer is a fully connected layer with shape * x 1.</p>
+        <p>The last layer is the output layer, with 10 outputs representing 10 digits. The activation function is now ‘softmax’.</p>
+        <div id="div8">
+          <button onclick="defineModel()">Define the model</button>
+      </div>
+
+      <script>
+        async function defineModel() {
+          const model = tf.sequential();
+          model.add(tf.layers.conv2d({
+            inputShape: [28, 28, 1],
+            filters: 8,
+            kernelSize: 5,
+            strides: 1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+          }));
+          model.add(tf.layers.maxPooling2d({ poolSize: [2, 2], strides: [2, 2] }));
+          model.add(tf.layers.conv2d({
+            kernelSize: 5,
+            filters: 16,
+            strides: 1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+          }));
+          model.add(tf.layers.maxPooling2d({ poolSize: [2, 2], strides: [2, 2] }));
+          model.add(tf.layers.flatten());
+          model.add(tf.layers.dense({ units: 10, kernelInitializer: 'varianceScaling', activation: 'softmax' }));
+      
+          model.summary();
+      
+          const div9 = document.getElementById('div9');
+          div9.textContent = 'Model defined. Check the console for details.';
+        }
+      </script>
+
       <div id="div9"></div>
       <div id="div10"></div>
       <div id="div11"></div>
