@@ -141,15 +141,15 @@
       
       <div id="div8">
         <h2>Section 6. Define a CNN.</h2>
-        <p>Our CNN has input of shape 28 x 28 x 1.</p>
-        <p>The first layer is a convolution + pooling. We will use 8 filters, each filter has kernel size=5 x 5 and stride =1. The activation function is ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
-        <p>The second layer is also a convolution + pooling. This time, we use 16 filters each of kernel size=5x5 and stride =1. The activation function is also ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
-        <p>The third layer is a fully connected layer with shape * x 1.</p>
-        <p>The last layer is the output layer, with 10 outputs representing 10 digits. The activation function is now ‘softmax’.</p>
-        <div id="div8">
-          <button onclick="defineModel()">Define the model</button>
+      <p>Our CNN has input of shape 28 x 28 x 1.</p>
+      <p>The first layer is a convolution + pooling. We will use 8 filters, each filter has kernel size=5 x 5 and stride =1. The activation function is ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
+      <p>The second layer is also a convolution + pooling. This time, we use 16 filters each of kernel size=5x5 and stride =1. The activation function is also ‘relu’. We use the max pooling of size 2 x 2 with stride=[2,2].</p>
+      <p>The third layer is a fully connected layer with shape * x 1.</p>
+      <p>The last layer is the output layer, with 10 outputs representing 10 digits. The activation function is now ‘softmax’.</p>
+        <button onclick="defineModel()">Define the model</button>
       </div>
-
+      <div id="div9"></div>
+      
       <script>
         async function defineModel() {
           const model = tf.sequential();
@@ -173,25 +173,116 @@
           model.add(tf.layers.flatten());
           model.add(tf.layers.dense({ units: 10, kernelInitializer: 'varianceScaling', activation: 'softmax' }));
       
-          model.summary();
-      
+          model.compile({
+      optimizer: 'adam',
+      loss: 'categoricalCrossentropy',
+      metrics: ['accuracy']
+    });
+
+    globalModel = model; // Save the model to the global variable
+
+
           const div9 = document.getElementById('div9');
-          div9.textContent = 'Model defined. Check the console for details.';
+          tfvis.show.modelSummary(div9, model);
+      
+          
+         // div9.textContent = 'Model defined. Check the console for details.';
         }
       </script>
 
-      <div id="div9"></div>
-      <div id="div10"></div>
+<div id="div10">
+  <h2>Section 7. Train the model using 5000 images</h2>
+  <p>The batch size = 512, and epochs = 10.</p>
+  <p>The test size = 1000.</p>
+  <p>The callbacks have...</p>
+  <button onclick="trainModel()">Train the model</button>
+</div>
+
+<script>
+  async function trainModel() {
+    // Compile the globalModel
+    globalModel.compile({
+      optimizer: 'adam',
+    loss: 'categoricalCrossentropy',
+    metrics: ['accuracy']
+  });
+
+  // Obtain a batch of 5000 training examples
+  const trainData = mnistData.nextTrainBatch(5000);
+  const trainImages = trainData.xs.reshape([5000, 28, 28, 1]);
+  const trainLabels = trainData.labels;
+
+  // Obtain a batch of 1000 testing examples
+  const testData = mnistData.nextTestBatch(1000);
+  const testImages = testData.xs.reshape([1000, 28, 28, 1]);
+  const testLabels = testData.labels;
+
+
+//  const fitCallbacks = tfvis.show.fitCallbacks(document.getElementById('div11'), 
+//     ['loss', 'acc'],
+//      {height: 400});
+
+  // Train the model
+  const history = await globalModel.fit(trainImages, trainLabels, {
+    batchSize: 512,
+    epochs: 10,
+    validationData: [testImages, testLabels],
+
+    callbacks: tfvis.show.fitCallbacks(
+      document.getElementById('div11'),
+      //{ name: 'Model Training', tab: 'Model' },
+      ['loss', 'acc'],
+      { height: 400 }
+    )
+    
+    //callbacks: fitCallbacks
+  });
+
+
+    // Display the training history
+    //tfvis.show.history(document.getElementById('div11'), history);
+
+}
+</script>
+
       <div id="div11"></div>
-      <div id="div12"></div>
+
+      <div id="div12">
+        <h2>Section 8. Evaluate the model</h2>
+        <p>We will obtain 500 images from the dataset mnistData.</p>
+        <p>We use the trained model to calculate the predictions and then compare the predictions with the provided labels.</p>
+        <p>We then draw a confusion matrix to show for each digit, how many images are labeled for that digit and how many images that predicted to that digit. Further, how many difference.</p>
+        <button onclick="showConfusion(globalModel, mnistData)">Show a confusion matrix</button>
+      </div>
       <div id="div13"></div>
-      <div id="div14"></div>
-      <div id="div15"></div>
-      <div id="div16"></div>
-      <div id="div17"></div>
-      <div id="div18"></div>
-      <div id="div19"></div>
-      <div id="div20"></div>
+      <script>
+          const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+
+        function doPrediction(model, data, testDataSize = 500) {
+          const IMAGE_WIDTH = 28;
+          const IMAGE_HEIGHT = 28;
+          const testData = data.nextTestBatch(testDataSize);
+          const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
+          const labels = testData.labels.argMax(-1);
+          const preds = model.predict(testxs).argMax(-1);
+
+          testxs.dispose();
+          return [preds, labels];
+        }
+
+
+
+        async function showConfusion(model, data) {
+          const [preds, labels] = doPrediction(model, data);
+          const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
+          //const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
+          const container = document.getElementById('div13');
+          tfvis.render.confusionMatrix(container, {values: confusionMatrix, tickLabels: classNames});
+
+          labels.dispose();
+        }
+
+      </script>
     </main>
   </div>
 </body>
